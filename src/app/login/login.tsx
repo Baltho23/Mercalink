@@ -9,12 +9,13 @@ import { useState } from 'react';
 
 export default function Login() {
 
-    const[isLoginForm, setIsLoginForm]= useState(true) 
+    const[currentForm, setCurrentForm]= useState(0) 
 
 
-    function cambioFormulario(){
-        setIsLoginForm(!isLoginForm)
+    function cambioFormulario(idForm:number){
+        setCurrentForm(idForm)
     }
+    
 
     function LoginForm(){
         return(
@@ -35,7 +36,10 @@ export default function Login() {
                         required
                     ></Input>
                     <Checkbox>Recordarme</Checkbox>
-                    <p>¿Aun no tienes cuenta? <Link href='#' onPress={cambioFormulario}>Registrate</Link></p>
+                    <div className='flex justify-between'>
+                      <Link  href='#' onPress={()=>cambioFormulario(1)}>Registrate</Link>
+                      <Link href='#' onPress={()=>cambioFormulario(2)}>Recuperar Contraseña</Link>
+                    </div>
                     <Button color="primary">Ingresar</Button>
                 </form>
             </div>
@@ -88,7 +92,7 @@ export default function Login() {
                 ></Input>
                 <p>
                   ¿Ya tienes cuenta?{" "}
-                  <Link href="#" onPress={cambioFormulario}>
+                  <Link href="#" onPress={()=>cambioFormulario(0)}>
                     Inicia Sesion
                   </Link>
                 </p>
@@ -99,9 +103,76 @@ export default function Login() {
         );
     }
 
-    return (
-        <>
-        {isLoginForm ? <LoginForm/> : <RegisterForm/>}
-        </>
-    );
+    function RecuperarContraCorreo(){
+      return(
+      <section className="login-main">
+          <div className="login-container">
+              <h1 className="mb-5 text-xl font-bold text-center">Recuperar Contraseña</h1>
+              <form className="login-form">
+                  <Input 
+                      name='Correo'
+                      type="email" 
+                      label="Correo electronico" 
+                      required
+                  ></Input>
+                  <p>
+                  ¿Recordaste la Contraseña?{" "}
+                  <Link href="#" onPress={()=>cambioFormulario(5)}>
+                    Volver
+                  </Link>
+                </p>
+                  <Button onPress={()=>cambioFormulario(3)} color="primary">Enviar Codigo</Button>
+              </form>
+          </div>
+      </section>
+  )
+      
+  }
+
+  function RecuperarContraCodigo(){
+    return(
+    <section className="login-main">
+        <div className="login-container">
+            <h1 className="mb-5 text-xl font-bold text-center">Recuperar Contraseña</h1>
+            <form className="login-form">
+                <Input 
+                    name='Correo'
+                    type="text" 
+                    label="Codigo de verificacion" 
+                    required
+                ></Input>
+                <p>
+                  ¿Te equivocaste de correo?{" "}
+                  <Link href="#" onPress={()=>cambioFormulario(4)}>
+                    Volver
+                  </Link>
+                </p>
+                <Button color="primary">Enviar Codigo</Button>
+            </form>
+        </div>
+    </section>
+)
+    
+}
+
+switch (currentForm) {
+  case 0:
+    return <LoginForm></LoginForm>;
+  
+  case 1:
+    return(<RegisterForm></RegisterForm>)
+
+  case 2:
+    return(<RecuperarContraCorreo></RecuperarContraCorreo>)
+
+  case 3:
+    return(<RecuperarContraCodigo></RecuperarContraCodigo>)
+  
+  case 4:
+    return(<RecuperarContraCorreo></RecuperarContraCorreo>)
+
+  case 5:
+      return <LoginForm></LoginForm>;
+}
+
 } 

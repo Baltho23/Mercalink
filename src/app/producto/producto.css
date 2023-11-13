@@ -1,0 +1,17 @@
+.margen-lateral{
+    margin-left: 20%;
+    margin-right: 20%;
+}
+
+.size-img{
+    max-width: 800px
+}
+
+.size-info{
+   width: 60%;
+}
+
+.fondo{
+    background-color: aliceblue;
+    height: calc(100vh - 64px);
+}
