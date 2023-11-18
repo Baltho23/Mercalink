@@ -5,6 +5,7 @@ import React from "react";
 import {Select, SelectItem} from "@nextui-org/react";
 import {animals} from "./data";
 import {Card, CardBody, CardFooter, Image} from "@nextui-org/react";
+import Icon from '../components/icon/icon';
 
 export default function Producto(){
 
@@ -52,11 +53,8 @@ export default function Producto(){
             )}
           </Select>
           <div className="my-4">
-            <Button color="primary" variant="bordered" className="mr-2">
-              Comprar
-            </Button>
-            <Button variant="bordered" className="mx-2">
-              Agregar al carrito
+            <Button endContent={<Icon name="uil uil-shopping-bag"></Icon>} color="primary" variant="bordered" className="mr-2">
+              Agregar Al Paquete
             </Button>
           </div>
         </div>

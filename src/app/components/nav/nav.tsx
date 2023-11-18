@@ -49,6 +49,7 @@ export default function Nav(){
                   <DropdownItem key="dashboard">Perfil</DropdownItem>
                   <DropdownItem key="dashboard">Pedidos</DropdownItem>
                   <DropdownItem key="dashboard">Historial</DropdownItem>
+                  <DropdownItem key="dashboard">Carrito</DropdownItem>
                   <DropdownItem key="logout" color="danger">
                     Cerrar sesion
                   </DropdownItem>
