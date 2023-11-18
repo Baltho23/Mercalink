@@ -19,7 +19,7 @@ import { Input } from "@nextui-org/input";
 
 export default function Nav(){
     return (
-      <div className="hueso">
+      <div className="hueso shadow-black drop-shadow">
         <Navbar>
           <NavbarBrand>
             <p className="text-xl font-bold text-inherit">MercaLink</p>
