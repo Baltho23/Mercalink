@@ -1,50 +1,67 @@
 'use client'
-import { useRouter } from "next/navigation";
+import { redirect } from "next/navigation";
 import { Context, createContext, useContext, useEffect, useState } from "react"
 
 const AuthContext: Context<any> = createContext(null);
 
 export const useAuth = () => useContext(AuthContext);
 
-export const AuthProvider = ({children}: any) => {
+export const AuthProvider = ({children}: { children: React.ReactNode }) => {
     
-    const router = useRouter();
-    const [ user, setUser ]: any = useState(null);
+    const [ user, setUser ]: [any | null, Function] = useState(null);
     const [ protectedRoute, setProtectedRoute]: [boolean, Function] = useState(false);
     const [ loading, setLoading]: [boolean, Function] = useState(true);
 
     useEffect(() => {
-        const superUser = {usuario: 'admin', clave: 'admin'};
         const token = localStorage.getItem('token');
         if (token) {
-            setUser(superUser);
-            setLoading(false);
+            // fetch(API_METHODS.user.checkToken + token)
+            //     .then((response) => response.json())
+            //     .then((data) => {
+            //         console.log(data);
+            //         setUser(data.usuario)
+            //         setLoading(false);
+            //     }
+            // ).catch(
+            //     (error) => console.log(error)
+            // );
         } else {
             setLoading(false);
         }
     }, [])
-    
 
     const login = (user: any) => {
         setUser(user);
-        localStorage.setItem('token', 'ADMIN');
     }
 
     const logout = () => {
-        setUser(null);
-        localStorage.removeItem('token');
+        if (user) {
+            // fetch(API_METHODS.user.logout + user['id'], {...POST})
+            // .then((response) => response.text())
+            // .then((data) => {
+            //     console.log(data);
+            //     localStorage.removeItem('token');
+            //     setUser(null);
+            // }
+            // ).catch(
+            //     (error) => console.log(error)
+            // );
+        }
+        
     }
 
-    if (!loading) {
-        if (protectedRoute && !user.token) {
-            return router.push('/login');
-        } else {
-            return (
-                <AuthContext.Provider value={{user, login, logout}}>
-                    { children }
-                </AuthContext.Provider>
-            )
-        }
-    }
+    // if (!loading) {
+    //     if (protectedRoute && user) {
+    //         redirect('/login');
+    //     } else {
+    //         return (
+    //             <AuthContext.Provider value={{user, login, logout}}>
+    //                 { children }
+    //             </AuthContext.Provider>
+    //         )
+    //     }
+    // }
+
+    return children;
 }
 

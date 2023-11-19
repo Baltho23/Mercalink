@@ -1,11 +1,6 @@
 'use client'
 import './landing.css';
-import { Button } from "@nextui-org/button";
-import { Input } from "@nextui-org/input";
-import  Image  from "next/image";
-import banner1 from "../../assets/images/banner1.jpg"
-
-
+import { Image } from '@nextui-org/react';
 
 export default function Landing(){
 
@@ -20,33 +15,15 @@ export default function Landing(){
           <div
             id="carouselExampleInterval"
             className="carousel slide"
-            data-bs-ride="carousel">
-            <div className="carousel-inner complementar1">
-              <div className="carousel-item active " data-bs-interval="30000">
-                <img
-                  src="https://cdn.leonardo.ai/users/3bea4e2c-7fec-4590-b3f1-7370c67206f5/generations/e151da8a-44d6-4f1c-8529-f3811dbf4470/Leonardo_Diffusion_XL_Give_me_a_pantry_sundry_store_banner_in_0.jpg"
-                  className="complementar2"
-                  alt="..."
-                />
-              </div>
+            data-bs-ride="carousel"
+          >
+            <div className="carousel-banner">
+              <Image
+                src="https://cdn.leonardo.ai/users/3bea4e2c-7fec-4590-b3f1-7370c67206f5/generations/e151da8a-44d6-4f1c-8529-f3811dbf4470/Leonardo_Diffusion_XL_Give_me_a_pantry_sundry_store_banner_in_0.jpg"
+                alt='banner'
+                width="100%"
+              ></Image>
             </div>
-            <button
-              className="carousel-control-prev left-20"
-              type="button"
-              data-bs-target="#carouselExampleInterval"
-              data-bs-slide="prev"
-            >
-              <span
-                className="carousel-control-prev-icon decoration-black"
-                aria-hidden="true"
-              ></span>
-            </button>
-            <button
-              className="carousel-control-next right-20"
-              type="button"
-              data-bs-target="#carouselExampleInterval"
-              data-bs-slide="next"
-            ></button>
           </div>
         </div>
 

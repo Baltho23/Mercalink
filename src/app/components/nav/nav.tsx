@@ -16,13 +16,23 @@ import {
 } from "@nextui-org/react";
 import { Image } from "@nextui-org/image";
 import { Input } from "@nextui-org/input";
+import { useRouter } from "next/navigation";
 
 export default function Nav(){
+
+    const router = useRouter();
+
+    function navegar(url: string) {
+      router.push(url);
+    }
+  
     return (
       <div className="hueso shadow-black drop-shadow">
         <Navbar>
           <NavbarBrand>
-            <p className="text-xl font-bold text-inherit">MercaLink</p>
+            <Link href="/" className="text-xl font-bold text-inherit">
+              MercaLink
+            </Link>
           </NavbarBrand>
           <NavbarContent className="hidden sm:flex gap-3" justify="center">
             <NavbarItem className="margen">
@@ -49,7 +59,7 @@ export default function Nav(){
                   <DropdownItem key="dashboard">Perfil</DropdownItem>
                   <DropdownItem key="dashboard">Pedidos</DropdownItem>
                   <DropdownItem key="dashboard">Historial</DropdownItem>
-                  <DropdownItem key="dashboard">Carrito</DropdownItem>
+                  <DropdownItem key="dashboard" onClick={() => navegar('carrito')}>Carrito</DropdownItem>
                   <DropdownItem key="logout" color="danger">
                     Cerrar sesion
                   </DropdownItem>

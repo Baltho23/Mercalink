@@ -4,6 +4,7 @@ import './globals.css'
 import * as React from "react";
 import { Providers } from './providers';
 import Nav from './components/nav/nav';
+import { AuthProvider } from './services/auth.provider';
 
 
 const inter = Inter({ subsets: ['latin'] })
@@ -28,12 +29,13 @@ export default function RootLayout({
       </head>
       
       <body className={inter.className}>
-      <Nav></Nav>
-      <Providers>
+        <AuthProvider>
+          <Nav></Nav>
+          <Providers>
             {children}
-      </Providers>
+          </Providers>
+        </AuthProvider>
       </body>
-      
     </html>
   )
 }
