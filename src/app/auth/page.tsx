@@ -6,11 +6,14 @@ import { Link } from '@nextui-org/link';
 import { useState } from 'react';
 import { RegisterForm } from './registro/registro';
 import { LoginForm } from './login/login';
+import { useAuth } from '../services/auth.provider';
+import { redirect } from 'next/navigation';
 
 
 export default function Login() {
 
   const [currentForm, setCurrentForm]= useState(0);
+  const {user: currentUser, login, logout} = useAuth();
 
   function cambioFormulario(idForm:number){
     setCurrentForm(idForm)
@@ -68,6 +71,9 @@ export default function Login() {
     );
   }
 
+  if (currentUser) {
+    redirect("/");
+  }
   switch (currentForm) {
     case 0:
       return <LoginForm changeForm={cambioFormulario}></LoginForm>

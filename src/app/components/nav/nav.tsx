@@ -32,7 +32,8 @@ export default function Nav(){
       if (currentUser) {
         const userFullname = `${currentUser.name} ${currentUser.lastName}`;
         return (
-          <Dropdown>
+          <NavbarItem className="flex cursor-pointer">
+            <Dropdown>
             <DropdownTrigger className="cursor-pointer">
               <div className="flex">
                 <Image
@@ -49,22 +50,23 @@ export default function Nav(){
               </div>
             </DropdownTrigger>
             <DropdownMenu aria-label="Profile Actions" variant="flat">
-              <DropdownItem key="dashboard">Perfil</DropdownItem>
-              <DropdownItem key="dashboard">Pedidos</DropdownItem>
-              <DropdownItem key="dashboard">Historial</DropdownItem>
-              <DropdownItem key="dashboard" onClick={() => navegar('carrito')}>Carrito</DropdownItem>
+              <DropdownItem>Perfil</DropdownItem>
+              <DropdownItem>Pedidos</DropdownItem>
+              <DropdownItem>Historial</DropdownItem>
+              <DropdownItem onClick={() => navegar('carrito')}>Carrito</DropdownItem>
               <DropdownItem key="logout" color="danger">
                 Cerrar sesion
               </DropdownItem>
             </DropdownMenu>
           </Dropdown>
+          </NavbarItem>
         );
       } else {
         return (
           <NavbarItem>
             <Button 
               as={Link} 
-              color="primary" 
+              color="secondary" 
               href="auth" 
               variant="flat"
             >
@@ -84,12 +86,10 @@ export default function Nav(){
             </Link>
           </NavbarBrand>
           <NavbarContent className="hidden sm:flex gap-3" justify="center">
-            <NavbarItem className="margen">
-              <Input isClearable size="lg" placeholder="Buscar Productos..." />
-            </NavbarItem>
             <NavbarItem>
-              <ProfileItem></ProfileItem>
+              <Input placeholder="Buscar Productos..." />
             </NavbarItem>
+            <ProfileItem></ProfileItem>
           </NavbarContent>
         </Navbar>
       </div>

@@ -14,13 +14,13 @@ export const AuthProvider = ({children}: { children: React.ReactNode }) => {
     const [ loading, setLoading]: [boolean, Function] = useState(true);
 
     useEffect(() => {
+        console.log('check')
         const token = localStorage.getItem('token');
         if (token) {
             fetch(`${API_URL}/token/` + token)
             .then((response) => response.json())
-            .then((data) => {
-                console.log(data);
-                // setUser(data.usuario)
+            .then((usuario) => {
+                setUser(usuario)
                 setLoading(false);
             })
             .catch(
@@ -38,13 +38,11 @@ export const AuthProvider = ({children}: { children: React.ReactNode }) => {
     const logout = () => {
         if (user) {
             fetch(`${API_URL}/logout` + user)
-            .then((response) => response.text())
-            .then((data) => {
-                console.log(data);
+            .then((response) => {
                 localStorage.removeItem('token');
                 setUser(null);
-            }
-            ).catch(
+            })
+            .catch(
                 (error) => console.log(error)
             );
         }
