@@ -1,5 +1,5 @@
 'use client'
-import './login.css';
+import './auth.css';
 import { Input } from "@nextui-org/input"
 import { Button } from "@nextui-org/button";
 import { Link } from '@nextui-org/link';
@@ -23,13 +23,13 @@ export default function Login() {
             <h1 className="mb-5 text-xl font-bold text-center">Recuperar Contraseña</h1>
             <form className="login-form">
                 <Input 
-                    name='Correo'
-                    type="email" 
-                    label="Correo electronico" 
-                    required
+                  name='Correo'
+                  type="email" 
+                  label="Correo electronico" 
+                  required
                 ></Input>
                 <p>
-                ¿Recordaste la Contraseña?{" "}
+                ¿Recordaste la Contraseña?
                 <Link href="#" onPress={()=>cambioFormulario(0)}>
                   Volver
                 </Link>
