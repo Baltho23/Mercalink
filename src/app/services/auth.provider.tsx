@@ -1,6 +1,7 @@
 'use client'
 import { redirect } from "next/navigation";
 import { Context, createContext, useContext, useEffect, useState } from "react"
+import { API_URL } from "./fetch.service";
 
 const AuthContext: Context<any> = createContext(null);
 
@@ -15,16 +16,16 @@ export const AuthProvider = ({children}: { children: React.ReactNode }) => {
     useEffect(() => {
         const token = localStorage.getItem('token');
         if (token) {
-            // fetch(API_METHODS.user.checkToken + token)
-            //     .then((response) => response.json())
-            //     .then((data) => {
-            //         console.log(data);
-            //         setUser(data.usuario)
-            //         setLoading(false);
-            //     }
-            // ).catch(
-            //     (error) => console.log(error)
-            // );
+            fetch(`${API_URL}/token/` + token)
+            .then((response) => response.json())
+            .then((data) => {
+                console.log(data);
+                // setUser(data.usuario)
+                setLoading(false);
+            })
+            .catch(
+            (error) => console.log(error)
+            );
         } else {
             setLoading(false);
         }
@@ -36,32 +37,30 @@ export const AuthProvider = ({children}: { children: React.ReactNode }) => {
 
     const logout = () => {
         if (user) {
-            // fetch(API_METHODS.user.logout + user['id'], {...POST})
-            // .then((response) => response.text())
-            // .then((data) => {
-            //     console.log(data);
-            //     localStorage.removeItem('token');
-            //     setUser(null);
-            // }
-            // ).catch(
-            //     (error) => console.log(error)
-            // );
+            fetch(`${API_URL}/logout` + user)
+            .then((response) => response.text())
+            .then((data) => {
+                console.log(data);
+                localStorage.removeItem('token');
+                setUser(null);
+            }
+            ).catch(
+                (error) => console.log(error)
+            );
         }
         
     }
 
-    // if (!loading) {
-    //     if (protectedRoute && user) {
-    //         redirect('/login');
-    //     } else {
-    //         return (
-    //             <AuthContext.Provider value={{user, login, logout}}>
-    //                 { children }
-    //             </AuthContext.Provider>
-    //         )
-    //     }
-    // }
-
-    return children;
+    if (!loading) {
+        if (protectedRoute && user) {
+            redirect('/auth');
+        } else {
+            return (
+                <AuthContext.Provider value={{user, login, logout}}>
+                    { children }
+                </AuthContext.Provider>
+            )
+        }
+    }
 }
 

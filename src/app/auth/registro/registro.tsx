@@ -1,19 +1,37 @@
 import { EmptyRegistro, RegistroDTO } from "@/app/models/auth.model";
+import { useAuth } from "@/app/services/auth.provider";
+import { API_URL, POST } from "@/app/services/fetch.service";
 import { Button, Input, Link } from "@nextui-org/react";
 import { useState } from "react";
 
+export function RegisterForm({changeForm}: {changeForm: Function}) {
 
-
-export function RegisterForm({changeForm}: {changeForm: Function}){
+    const {user: currentUser, login, logout} = useAuth();
     const [registroForm, setRegistroForm]: [RegistroDTO, Function] = useState(EmptyRegistro);
 
     function handleRegistroForm(event: any) {
-        const {name, value} = event.target;
-        setRegistroForm((prevFormData: RegistroDTO) => ({
-            ...prevFormData,
-            [name]: value,
-        }));
-      }
+      const {name, value} = event.target;
+      setRegistroForm((prevFormData: RegistroDTO) => ({
+          ...prevFormData,
+          [name]: value,
+      }));
+    }
+
+    function submitForm() {
+      const body = JSON.stringify(registroForm);
+      console.log(body);
+      fetch(`${API_URL}/register`, {...POST, body})
+      .then((response) => response.json())
+      .then((resp) => {
+        const token = resp.access_token;
+        const user = resp.data;
+        localStorage.setItem('token', token);
+        login(user);
+      })
+      .catch(
+        (error) => console.log(error)
+      );
+    }
 
     return (
       <section className="login-main">
@@ -37,9 +55,17 @@ export function RegisterForm({changeForm}: {changeForm: Function}){
               required
             ></Input>
             <Input 
+              name="nit" 
+              type="text" 
+              label="NIT" 
+              value={registroForm.nit}
+              onChange={handleRegistroForm}
+              required
+            ></Input>
+            <Input 
               name="razon_social" 
               type="text" 
-              label="Apellido" 
+              label="Razon social" 
               value={registroForm.razon_social}
               onChange={handleRegistroForm}
               required
@@ -82,7 +108,7 @@ export function RegisterForm({changeForm}: {changeForm: Function}){
                 Inicia Sesion
               </Link>
             </p> 
-            <Button color="primary">Registrarse</Button>
+            <Button color="primary" onPress={submitForm}>Registrarse</Button>
           </form>
         </div>
       </section>
