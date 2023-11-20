@@ -5,10 +5,12 @@ import { useEffect, useState } from 'react';
 import { Image } from '@nextui-org/react';
 import { API_URL } from '../services/fetch.service';
 import { ProductoModel } from '../models/producto.model';
+import { useRouter } from 'next/navigation';
 
 export default function Landing() {
 
   const [productos, setProductos]: [ProductoModel[] | null, Function] = useState([]);
+  const router = useRouter();
 
   useEffect(() => {
     fetch(`${API_URL}/productos`)
@@ -19,7 +21,11 @@ export default function Landing() {
     .catch(
     (error) => console.log(error)
     );
-  }, [])
+  }, []);
+
+  function openProducto(productoId: number) {
+    router.push(`/producto/${productoId}`);
+  }
   
 
   return (
@@ -52,7 +58,7 @@ export default function Landing() {
         <h2 className='font-bold text-2xl'>Ofertas</h2>
         {productos.map((producto: ProductoModel) => {
           return (
-            <div key={producto.id} className="producto">
+            <div key={producto.id} className="producto" onClick={() => openProducto(producto.id)}>
               <Image
                 src="https://i.pinimg.com/236x/94/c8/af/94c8af794204150afb7fdc5d7ab2267d.jpg"
                 className="product-img"
@@ -61,9 +67,6 @@ export default function Landing() {
               <h3 className='font-medium'>{producto.nombre}</h3>
               <p className="Unidades">{`${producto.cantidad} ${producto.unidad_de_medida}`}</p>
               <p className="precio mb-2">${producto.precio}</p>
-              <button className="buttons">
-                <i className="fas fa-plus"></i>
-              </button>
             </div>
           );
         })}
@@ -73,18 +76,15 @@ export default function Landing() {
         <h2 className='font-bold text-2xl'>Sugerencias</h2>
         {productos.map((producto: ProductoModel) => {
           return (
-            <div key={producto.id} className="producto">
+            <div key={producto.id} className="producto" onClick={() => openProducto(producto.id)}>
               <Image
                 src="https://i.pinimg.com/236x/94/c8/af/94c8af794204150afb7fdc5d7ab2267d.jpg"
                 className="product-img"
                 alt='producto imagen'
               ></Image>
               <h3 className='font-medium'>{producto.nombre}</h3>
-              <p className="Unidades">{`${producto.cantidad} ${producto.unidad_de_medida}`}</p>
+              <p className="Unidades">Disponible: {`${producto.cantidad} ${producto.unidad_de_medida}`}</p>
               <p className="precio mb-2">${producto.precio}</p>
-              <button className="buttons">
-                <i className="fas fa-plus"></i>
-              </button>
             </div>
           );
         })}
