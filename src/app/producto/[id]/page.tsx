@@ -5,13 +5,15 @@ import React, { useEffect, useState } from "react";
 import {Input, Select, SelectItem} from "@nextui-org/react";
 import {Card, CardBody, CardFooter, Image} from "@nextui-org/react";
 import Icon from '../../components/icon/icon';
-import { API_URL } from '@/app/services/fetch.service';
+import { API_URL, POST } from '@/app/services/fetch.service';
 import { useParams } from 'next/navigation';
 import { ProductoModel } from '@/app/models/producto.model';
+import { useAuth } from '@/app/services/auth.provider';
 
 export default function Producto(){
 
   const {id: productoId} = useParams();
+  const {user, login, logout} = useAuth();
   const [producto, setProducto]: [ProductoModel, Function] = useState({} as ProductoModel);
   const [cantidad, setCantidad]: [number, Function] = useState(1);
 
@@ -27,6 +29,22 @@ export default function Producto(){
     (error) => console.log(error)
     );
   }, [productoId]);
+
+  function agregarProducto() {
+    const carritoItem: any = {
+      user_id: user.id,
+      producto_id: producto.id,
+      cantidad,
+      precio: 2,
+      carrito: false
+    }
+    const body = JSON.stringify(carritoItem);
+    fetch(`${API_URL}/carrito`, {...POST, body})
+    .then((response) => console.log(response))
+    .catch(
+      (error) => console.log(error)
+    );
+  }
   
   const list = [
     {
@@ -75,7 +93,13 @@ export default function Producto(){
               ></Input>
             </p>
             <div className="my-4">
-              <Button endContent={<Icon name="uil uil-shopping-bag"></Icon>} color="primary" variant="bordered" className="mr-2">
+              <Button 
+                endContent={<Icon name="uil uil-shopping-bag"></Icon>} 
+                color="primary" 
+                variant="bordered" 
+                className="mr-2"
+                onPress={agregarProducto}
+              >
                 Agregar al carrito
               </Button>
             </div>
