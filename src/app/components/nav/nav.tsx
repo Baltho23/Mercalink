@@ -87,7 +87,7 @@ export default function Nav(){
           </NavbarBrand>
           <NavbarContent className="hidden sm:flex gap-3" justify="center">
             <NavbarItem>
-              <Input placeholder="Buscar Productos..." />
+              <Input placeholder="Buscar productos..." />
             </NavbarItem>
             <ProfileItem></ProfileItem>
           </NavbarContent>
