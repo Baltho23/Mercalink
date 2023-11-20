@@ -8,10 +8,10 @@ export function LoginForm({changeForm}: {changeForm: Function}){
 
   const {user: currentUser, login, logout} = useAuth();
   const [loginForm, setLoginForm]: [LoginDTO, Function] = useState(EmptyLogin);
+  const [loading, setLoading]: [boolean, Function] = useState(false);
 
   function handleLoginForm(event: any) {;
     const {name, value} = event.target;
-    console.log(name,value);
     setLoginForm((prevFormData: LoginDTO) => ({
         ...prevFormData,
         [name]: value,
@@ -19,16 +19,16 @@ export function LoginForm({changeForm}: {changeForm: Function}){
   }
 
   function submitForm() {
+    setLoading(true);
     const body = JSON.stringify(loginForm);
-    console.log(body);
     fetch(`${API_URL}/login`, {...POST, body})
     .then((response) => response.json())
     .then((resp) => {
-      console.log(resp)
       const token = resp.access_token;
       const user = resp.user;
       localStorage.setItem('token', token);
       login(user);
+      setLoading(false);
     })
     .catch(
       (error) => console.log(error)
@@ -58,7 +58,7 @@ export function LoginForm({changeForm}: {changeForm: Function}){
                 <Link  href='#' onPress={()=>changeForm(1)}>Registrate</Link>
                 <Link href='#' onPress={()=>changeForm(2)}>Recuperar Contraseña</Link>
               </div>
-              <Button color="primary" onPress={submitForm}>Ingresar</Button>
+              <Button isLoading={loading} color="primary" onPress={submitForm}>Ingresar</Button>
           </form>
       </div>
     </section>

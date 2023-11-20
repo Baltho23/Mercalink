@@ -8,6 +8,7 @@ export function RegisterForm({changeForm}: {changeForm: Function}) {
 
   const {user: currentUser, login, logout} = useAuth();
   const [registroForm, setRegistroForm]: [RegistroDTO, Function] = useState(EmptyRegistro);
+  const [loading, setLoading]: [boolean, Function] = useState(false);
 
   function handleRegistroForm(event: any) {
     const {name, value} = event.target;
@@ -18,8 +19,8 @@ export function RegisterForm({changeForm}: {changeForm: Function}) {
   }
 
   function submitForm() {
+    setLoading(true);
     const body = JSON.stringify(registroForm);
-    console.log(body);
     fetch(`${API_URL}/register`, {...POST, body})
     .then((response) => response.json())
     .then((resp) => {
@@ -27,6 +28,7 @@ export function RegisterForm({changeForm}: {changeForm: Function}) {
       const user = resp.data;
       localStorage.setItem('token', token);
       login(user);
+      setLoading(false);
     })
     .catch(
       (error) => console.log(error)
@@ -108,7 +110,7 @@ export function RegisterForm({changeForm}: {changeForm: Function}) {
               Inicia Sesion
             </Link>
           </p> 
-          <Button color="primary" onPress={submitForm}>Registrarse</Button>
+          <Button isLoading={loading} color="primary" onPress={submitForm}>Registrarse</Button>
         </form>
       </div>
     </section>

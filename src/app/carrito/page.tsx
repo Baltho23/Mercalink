@@ -93,7 +93,6 @@ export default function Carrito(){
 
   const renderCell = useCallback((user: User, columnKey: React.Key) => {
     const cellValue = user[columnKey as keyof User];
-    console.log(cellValue, user)
     switch (columnKey) {
       case "name":
         return (

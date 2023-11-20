@@ -14,7 +14,6 @@ export const AuthProvider = ({children}: { children: React.ReactNode }) => {
     const [ loading, setLoading]: [boolean, Function] = useState(true);
 
     useEffect(() => {
-        console.log('check')
         const token = localStorage.getItem('token');
         if (token) {
             fetch(`${API_URL}/token/` + token)
