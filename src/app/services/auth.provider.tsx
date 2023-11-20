@@ -37,7 +37,8 @@ export const AuthProvider = ({children}: { children: React.ReactNode }) => {
 
     const logout = () => {
         if (user) {
-            fetch(`${API_URL}/logout` + user)
+            const token = localStorage.getItem('token');
+            fetch(`${API_URL}/logout`, {headers: {"Authorization": `Bearer ${token}`}})
             .then((response) => {
                 localStorage.removeItem('token');
                 setUser(null);

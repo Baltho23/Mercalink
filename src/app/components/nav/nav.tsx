@@ -54,7 +54,7 @@ export default function Nav(){
               <DropdownItem>Pedidos</DropdownItem>
               <DropdownItem>Historial</DropdownItem>
               <DropdownItem onClick={() => navegar('carrito')}>Carrito</DropdownItem>
-              <DropdownItem key="logout" color="danger">
+              <DropdownItem key="logout" color="danger" onPress={logout}>
                 Cerrar sesion
               </DropdownItem>
             </DropdownMenu>
