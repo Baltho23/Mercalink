@@ -15,7 +15,7 @@ import {
 } from "@nextui-org/react";
 import { Image } from "@nextui-org/image";
 import { Input } from "@nextui-org/input";
-import { useRouter } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 import { useAuth } from "@/app/services/auth.provider";
 
 export default function Nav(){
@@ -53,7 +53,7 @@ export default function Nav(){
               <DropdownItem>Perfil</DropdownItem>
               <DropdownItem>Pedidos</DropdownItem>
               <DropdownItem>Historial</DropdownItem>
-              <DropdownItem onClick={() => navegar('carrito')}>Carrito</DropdownItem>
+              <DropdownItem onClick={() => navegar('/carrito')}>Carrito</DropdownItem>
               <DropdownItem key="logout" color="danger" onPress={logout}>
                 Cerrar sesion
               </DropdownItem>

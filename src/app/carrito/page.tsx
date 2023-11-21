@@ -11,7 +11,7 @@ import { Button } from "@nextui-org/button";
 import { Chip, ChipProps } from "@nextui-org/chip";
 import { Pagination } from "@nextui-org/pagination";
 import { TableState } from "../models/tableState.model";
-import { API_URL } from "../services/fetch.service";
+import { API_URL, POST } from "../services/fetch.service";
 import { ProductoModel } from "../models/producto.model";
 import { useAuth } from "../services/auth.provider";
 
@@ -118,6 +118,22 @@ export default function ControlInventario() {
     }
   }, [sortDescriptor, items]);
 
+  async function borrarProducto(producto: any) {
+    await fetch(`${API_URL}/borrarPedido/${producto.pedido.id}`, {...POST})
+      .then((response) => {
+        reloadTable();
+      }
+    ).catch((error) => console.log(error));
+  }
+
+  function borrarCarrito() {
+    fetch(`${API_URL}/borrarCarrito/${currentUser.id}`, {...POST})
+      .then((response) => {
+        reloadTable();
+      }
+    ).catch((error) => console.log(error));
+  }
+
   const renderCell = useCallback((producto: ProductoModel, columnKey: React.Key) => {
     const index = Math.floor(Math.random() * (productosImages.length - 0) + 0);
     const imgUrl = productosImages[index];
@@ -137,9 +153,13 @@ export default function ControlInventario() {
             {cellValue}
           </Chip>
         );
+      case "cantidad":
+        const productoDTO = producto as any;
+        return productoDTO.pedido.cantidad
       case "acciones":
         return (
           <Button
+            onPress={()=> borrarProducto(producto)}
             isIconOnly
             endContent={<Icon name="times"></Icon>}
             color="danger"
@@ -210,7 +230,7 @@ export default function ControlInventario() {
 
   const totalCost = useMemo(() => {
     const costos: number[] = [];
-    tableState.data.forEach((producto: ProductoModel) => costos.push(producto.precio));
+    tableState.data.forEach((producto: any) => costos.push(producto.precio * producto.pedido.cantidad));
     return costos.reduce((total, precio) => total + precio, 0);
   }, [tableState.data]);
     
@@ -255,11 +275,12 @@ export default function ControlInventario() {
       </Table>
       <div className="flex ml-3 gap-5 items-center">
         <div className="font-bold">
-          Total precio: <span className="text-green-600">${totalCost}</span>
+          Precio total: <span className="text-green-600">${totalCost}</span>
         </div>
         <div>
           <Button
             color="primary"
+            onPress={borrarCarrito}
           >
             Comprar productos
           </Button>
