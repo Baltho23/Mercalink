@@ -99,6 +99,7 @@
 
 
 /* Estilos para los productos en oferta y más vendidos */
+
 .ofertas,
 .mas-vendidos {
     display: flex;
@@ -141,9 +142,9 @@
     position: absolute;
     top: -70px;
     left: 30px;
-    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    font-family: 'Open Sans', 'Helvetica Neue', sans-serif;
     display: flex;
-
+    font-size: 42px;
 }
 
 .mas-vendidos h2 {
@@ -155,6 +156,7 @@
 }
 
 .producto {
+    box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
     background-color: #fff;
     border: 1px solid #ddd;
     padding: 20px;
@@ -167,6 +169,11 @@
     flex-direction: column;
     justify-content: space-between;
     cursor: pointer;
+    transition: all .5s;
+}
+
+.producto:hover {
+    transform: scale(1.03)
 }
 
 .product-img {

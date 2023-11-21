@@ -1,53 +1,79 @@
-'use client'
-import { useCallback, useMemo, useState } from "react";
-import {
-  Table,
-  TableHeader,
-  TableColumn,
-  TableBody,
-  TableRow,
-  TableCell,
-  Input,
-  Button,
-  DropdownTrigger,
-  Dropdown,
-  DropdownMenu,
-  DropdownItem,
-  Chip,
-  User,
-  Pagination,
-  Selection,
-  ChipProps,
-  SortDescriptor
-} from "@nextui-org/react";
+'use client';
 import Icon from "@/app/components/icon/icon";
-import {columns, users, statusOptions} from "./data";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Selection, SortDescriptor} from "@nextui-org/table";
+import { columns } from "./data";
+import { InitialModalState, ModalState } from "@/app/models/modalState.model";
+import { User } from "@nextui-org/user";
+import { Input } from "@nextui-org/input";
+import { Spinner } from "@nextui-org/spinner";
+import { Button } from "@nextui-org/button";
+import { Chip, ChipProps } from "@nextui-org/chip";
+import { Pagination } from "@nextui-org/pagination";
+import { TableState } from "../models/tableState.model";
+import { API_URL } from "../services/fetch.service";
+import { ProductoModel } from "../models/producto.model";
+import { useAuth } from "../services/auth.provider";
 
-const statusColorMap: Record<string, ChipProps["color"]> = {
-  activo: "success",
-  inactivo: "danger",
-  vacaciones: "warning",
+const categoryColorMap: Record<string, ChipProps["color"]> = {
+  suministro: "success",
+  medicamento: "danger",
+  otros: "warning",
 };
 
-const INITIAL_VISIBLE_COLUMNS = ["name", "type", "amount", "expiration", "supplier", "actions"];
+const productosImages = [
+  "https://www.viaappia.com.ve/uploads/productos/20220915161313H.jpeg",
+  "https://images.openfoodfacts.org/images/products/780/200/000/2564/front_es.12.full.jpg",
+  "https://andreuprados.com/wp-content/uploads/2017/01/apple_0.jpg",
+  "https://fundacionmujeresempresarias.org/wp-content/uploads/2016/08/lechuga-crespa.png",
+  "https://copservir.vtexassets.com/arquivos/ids/1029868/ACETAMINOFEN-500-MG--COASP-_L.png?v=638292538669270000",
+  "https://static.merqueo.com/images/products/large/7cc900b9-71cd-47f4-b3b1-1d61d0ea9def.jpg",
+  "https://jumbocolombiaio.vtexassets.com/arquivos/ids/202997/7702129020756-20-282-29.jpg?v=637814193303400000",
+  "https://thefoodtech.com/wp-content/uploads/2021/05/yogures.png",
+  "https://vaquitaexpress.com.co/media/catalog/product/cache/e89ece728e3939ca368b457071d3c0be/7/5/7509546069241_37.jpg",
+  "https://elamigodelanoche.com/wp-content/uploads/2020/06/Cerveza-A%CC%81guila-Original-Lata_.jpg",
+  "https://mundodulces17.com/wp-content/uploads/2023/03/festival-chocolate-x-4.jpg"
+];
 
-type User = typeof users[0];
+const INITIAL_VISIBLE_COLUMNS = ["nombre", "categoria", "cantidad", "unidad_de_medida", "precio", "acciones"];
 
-export default function Carrito(){
+export default function ControlInventario() {
 
-    const [filterValue, setFilterValue] = useState("");
-  const [selectedKeys, setSelectedKeys] = useState<Selection>(new Set([]));
+  const {user: currentUser, login, logout} = useAuth();
+  const [tableState, setTableState]: [TableState, Function] = useState({isLoading: true, data: []});
+  const [filterValue, setFilterValue] = useState("");
   const [visibleColumns, setVisibleColumns] = useState<Selection>(new Set(INITIAL_VISIBLE_COLUMNS));
-  const [statusFilter, setStatusFilter] = useState<Selection>("all");
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({
     column: "type",
     direction: "ascending",
   });
-
   const [page, setPage] = useState(1);
 
+  const loadTable = async () => {
+    await fetch(`${API_URL}/mostrarCarrito/${currentUser.id}`)
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
+        const status = { isLoading: false, data }
+        setTableState(status);
+      }
+    ).catch((error) => console.log(error));
+  }
+
+  const reloadTable = () => {
+    const status: TableState = { ...tableState, isLoading: true}
+    setTableState(status);
+    loadTable();
+  }
+
+  useEffect(() => {
+    loadTable();
+  }, [])
+
   const hasSearchFilter = Boolean(filterValue);
+
+  const loadingState = tableState.isLoading ? "loading" : "idle";
 
   const headerColumns = useMemo(() => {
     if (visibleColumns === "all") return columns;
@@ -56,103 +82,72 @@ export default function Carrito(){
   }, [visibleColumns]);
 
   const filteredItems = useMemo(() => {
-    let filteredUsers = [...users];
+    if (tableState.data) {
+      let filteredProductos = [...tableState.data];
 
-    if (hasSearchFilter) {
-      filteredUsers = filteredUsers.filter((user) =>
-        user.name.toLowerCase().includes(filterValue.toLowerCase()),
-      );
+      if (hasSearchFilter) {
+        filteredProductos = filteredProductos.filter((producto) =>
+          producto.name.toLowerCase().includes(filterValue.toLowerCase()),
+        );
+      }
+
+      return filteredProductos;
     }
-    if (statusFilter !== "all" && Array.from(statusFilter).length !== statusOptions.length) {
-      filteredUsers = filteredUsers.filter((user) =>
-        Array.from(statusFilter).includes(user.status),
-      );
-    }
+  }, [hasSearchFilter, filterValue, tableState.data]);
 
-    return filteredUsers;
-  }, [hasSearchFilter, filterValue, statusFilter]);
-
-  const pages = Math.ceil(filteredItems.length / rowsPerPage);
+  const pages = filteredItems? Math.ceil(filteredItems.length / rowsPerPage) : 1;
 
   const items = useMemo(() => {
-    const start = (page - 1) * rowsPerPage;
-    const end = start + rowsPerPage;
+    if (filteredItems) {
+      const start = (page - 1) * rowsPerPage;
+      const end = start + rowsPerPage;
 
-    return filteredItems.slice(start, end);
+      return filteredItems.slice(start, end);
+    }
   }, [page, filteredItems, rowsPerPage]);
 
   const sortedItems = useMemo(() => {
-    return [...items].sort((a: User, b: User) => {
-      const first = a[sortDescriptor.column as keyof User] as number;
-      const second = b[sortDescriptor.column as keyof User] as number;
-      const cmp = first < second ? -1 : first > second ? 1 : 0;
-
-      return sortDescriptor.direction === "descending" ? -cmp : cmp;
-    });
+    if (items) {
+      return [...items].sort((a: ProductoModel, b: ProductoModel) => {
+        const first = a[sortDescriptor.column as keyof ProductoModel] as number;
+        const second = b[sortDescriptor.column as keyof ProductoModel] as number;
+        const cmp = first < second ? -1 : first > second ? 1 : 0;
+  
+        return sortDescriptor.direction === "descending" ? -cmp : cmp;
+      });
+    }
   }, [sortDescriptor, items]);
 
-  const renderCell = useCallback((user: User, columnKey: React.Key) => {
-    const cellValue = user[columnKey as keyof User];
+  const renderCell = useCallback((producto: ProductoModel, columnKey: React.Key) => {
+    const index = Math.floor(Math.random() * (productosImages.length - 0) + 0);
+    const imgUrl = productosImages[index];
+    const cellValue: any = producto[columnKey as keyof ProductoModel];
     switch (columnKey) {
-      case "name":
+      case "nombre":
+        console.log('usuario');
         return (
           <User
-            avatarProps={{radius: "lg", src: user.avatar}}
-            description={user.supplier}
-            name={cellValue}
-          >
-          </User>
+            avatarProps={{radius: "lg", src: imgUrl}}
+            name={producto.nombre}
+          ></User>
         );
-      case "amount":
+      case "categoria":
         return (
-          <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{cellValue}</p>
-            <p className="text-bold text-tiny capitalize text-default-400"></p>
-          </div>
-        );
-      case "status":
-        return (
-          <Chip className="capitalize" color={statusColorMap[user.status]} size="sm" variant="flat">
+          <Chip className="capitalize" color={categoryColorMap[producto.categoria]} size="sm" variant="flat">
             {cellValue}
           </Chip>
         );
-      case "actions":
+      case "acciones":
         return (
-          <div className="relative flex justify-end items-center gap-2">
-            <Dropdown>
-              <DropdownTrigger>
-                <Button isIconOnly size="sm" variant="light">
-                    <Icon  name="ellipsis-v"></Icon>
-                </Button>
-              </DropdownTrigger>
-              <DropdownMenu>
-                <DropdownItem>Ver</DropdownItem>
-                <DropdownItem>Editar</DropdownItem>
-                <DropdownItem>Eliminar</DropdownItem>
-              </DropdownMenu>
-            </Dropdown>
-          </div>
+          <Button
+            isIconOnly
+            endContent={<Icon name="times"></Icon>}
+            color="danger"
+          ></Button>
         );
       default:
         return cellValue;
     }
-  }, []);
-
-  const onNextPage = useCallback(() => {
-    if (page < pages) {
-      setPage(page + 1);
-    }
-  }, [page, pages]);
-
-  const onPreviousPage = useCallback(() => {
-    if (page > 1) {
-      setPage(page - 1);
-    }
-  }, [page]);
-
-  const onRowsPerPageChange = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
-    setRowsPerPage(Number(e.target.value));
-    setPage(1);
   }, []);
 
   const onSearchChange = useCallback((value?: string) => {
@@ -182,84 +177,45 @@ export default function Carrito(){
             onClear={() => onClear()}
             onValueChange={onSearchChange}
           />
-          <div className="flex gap-3">
-            <Dropdown>
-              <DropdownTrigger className="hidden sm:flex">
-                <Button variant="flat" endContent={<Icon  name="angle-down"></Icon>}>
-                  Tipo
-                </Button>
-              </DropdownTrigger>
-              <DropdownMenu
-                disallowEmptySelection
-                aria-label="Table Columns"
-                closeOnSelect={false}
-                selectedKeys={statusFilter}
-                selectionMode="multiple"
-                onSelectionChange={setStatusFilter}
-              >
-                {statusOptions.map((status) => (
-                  <DropdownItem key={status.uid} className="capitalize">
-                    {(status.name)}
-                  </DropdownItem>
-                ))}
-              </DropdownMenu>
-            </Dropdown>
-            <Dropdown>
-              <DropdownTrigger className="hidden sm:flex">
-                <Button  variant="flat" endContent={<Icon  name="angle-down"></Icon>}>
-                  Columnas
-                </Button>
-              </DropdownTrigger>
-              <DropdownMenu
-                disallowEmptySelection
-                aria-label="Table Columns"
-                closeOnSelect={false}
-                selectedKeys={visibleColumns}
-                selectionMode="multiple"
-                onSelectionChange={setVisibleColumns}
-              >
-                {columns.map((column) => (
-                  <DropdownItem key={column.uid} className="capitalize">
-                    {(column.name)}
-                  </DropdownItem>
-                ))}
-              </DropdownMenu>
-            </Dropdown>
-            <Button color="primary" endContent={<Icon  name="uil uil-shopping-bag"></Icon>} >
-              Realizar Compra
-            </Button>
-          </div>
         </div>
         <div className="flex justify-between items-center">
-          <span className="text-small">Total: {users.length} Productos</span>
+          <span className="text-small">Total: {tableState.data?.length} Productos</span>
         </div>
       </div>
     );
   }, [
     onClear,
     filterValue,
-    statusFilter,
-    visibleColumns,
+    tableState.data,
     onSearchChange,
   ]);
 
   const bottomContent = useMemo(() => {
-    return (
-      <div className="py-2 px-2 flex justify-center items-center">
-        <Pagination
-          isCompact
-          showControls
-          showShadow
-          color="primary"
-          page={page}
-          total={pages}
-          onChange={setPage}
-        />
-      </div>
-    );
-  }, [page, pages]);
+    if (!tableState.isLoading) {
+      return (
+        <div className="py-2 px-2 flex justify-center items-center">
+          <Pagination
+            isCompact
+            showControls
+            showShadow
+            color="primary"
+            page={page}
+            total={pages}
+            onChange={setPage}
+          />
+        </div>
+      );
+    }
+  }, [page, pages, tableState.isLoading]);
+
+  const totalCost = useMemo(() => {
+    const costos: number[] = [];
+    tableState.data.forEach((producto: ProductoModel) => costos.push(producto.precio));
+    return costos.reduce((total, precio) => total + precio, 0);
+  }, [tableState.data]);
+    
   return (
-    <main className="m-5">
+    <div className="p-5">
       <Table
         aria-label="Example table with custom cells, pagination and sorting"
         isHeaderSticky
@@ -284,16 +240,31 @@ export default function Carrito(){
             </TableColumn>
           )}
         </TableHeader>
-        <TableBody emptyContent={"No users found"} items={sortedItems}>
+        <TableBody 
+          emptyContent={tableState.isLoading ? "Cargando" : "No se encontraron Productos"} 
+          items={sortedItems} 
+          loadingContent={<Spinner />}
+          loadingState={loadingState}
+        >
           {(item) => (
             <TableRow key={item.id}>
-              {(columnKey) => (
-                <TableCell>{renderCell(item, columnKey)}</TableCell>
-              )}
+              {(columnKey) => <TableCell>{renderCell(item, columnKey)}</TableCell>}
             </TableRow>
           )}
         </TableBody>
       </Table>
-    </main>
+      <div className="flex ml-3 gap-5 items-center">
+        <div className="font-bold">
+          Total precio: <span className="text-green-600">${totalCost}</span>
+        </div>
+        <div>
+          <Button
+            color="primary"
+          >
+            Comprar productos
+          </Button>
+        </div>
+      </div>
+    </div>
   );
 }

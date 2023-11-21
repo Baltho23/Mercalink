@@ -3,5 +3,6 @@
 @tailwind utilities;
 
 body {
-    background-color: #fff;
+    background-image: url("../assets/fondo.svg");
+    background-size: cover;
 }

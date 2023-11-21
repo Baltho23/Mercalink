@@ -5,6 +5,7 @@ import * as React from "react";
 import { Providers } from './providers';
 import Nav from './components/nav/nav';
 import { AuthProvider } from './services/auth.provider';
+import Footer from './components/footer/footer';
 
 
 const inter = Inter({ subsets: ['latin'] })
@@ -34,6 +35,7 @@ export default function RootLayout({
           <Providers>
             {children}
           </Providers>
+          <Footer></Footer>
         </AuthProvider>
       </body>
     </html>

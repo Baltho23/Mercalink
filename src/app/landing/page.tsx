@@ -7,6 +7,19 @@ import { API_URL } from '../services/fetch.service';
 import { ProductoModel } from '../models/producto.model';
 import { useRouter } from 'next/navigation';
 
+const productosImages = [
+  "https://www.viaappia.com.ve/uploads/productos/20220915161313H.jpeg",
+  "https://images.openfoodfacts.org/images/products/780/200/000/2564/front_es.12.full.jpg",
+  "https://andreuprados.com/wp-content/uploads/2017/01/apple_0.jpg",
+  "https://fundacionmujeresempresarias.org/wp-content/uploads/2016/08/lechuga-crespa.png",
+  "https://copservir.vtexassets.com/arquivos/ids/1029868/ACETAMINOFEN-500-MG--COASP-_L.png?v=638292538669270000",
+  "https://static.merqueo.com/images/products/large/7cc900b9-71cd-47f4-b3b1-1d61d0ea9def.jpg",
+  "https://jumbocolombiaio.vtexassets.com/arquivos/ids/202997/7702129020756-20-282-29.jpg?v=637814193303400000",
+  "https://thefoodtech.com/wp-content/uploads/2021/05/yogures.png",
+  "https://vaquitaexpress.com.co/media/catalog/product/cache/e89ece728e3939ca368b457071d3c0be/7/5/7509546069241_37.jpg",
+  "https://elamigodelanoche.com/wp-content/uploads/2020/06/Cerveza-A%CC%81guila-Original-Lata_.jpg",
+  "https://mundodulces17.com/wp-content/uploads/2023/03/festival-chocolate-x-4.jpg"
+]
 export default function Landing() {
 
   const [productos, setProductos]: [ProductoModel[] | null, Function] = useState([]);
@@ -57,10 +70,12 @@ export default function Landing() {
       <section className="ofertas">
         <h2 className='font-bold text-2xl'>Ofertas</h2>
         {productos.map((producto: ProductoModel) => {
+          const index = Math.floor(Math.random() * (productosImages.length - 0) + 0);
+          const imgUrl = productosImages[index];
           return (
             <div key={producto.id} className="producto" onClick={() => openProducto(producto.id)}>
               <Image
-                src="https://i.pinimg.com/236x/94/c8/af/94c8af794204150afb7fdc5d7ab2267d.jpg"
+                src={imgUrl}
                 className="product-img"
                 alt='producto imagen'
               ></Image>
@@ -75,10 +90,12 @@ export default function Landing() {
       <section className="ofertas">
         <h2 className='font-bold text-2xl'>Sugerencias</h2>
         {productos.map((producto: ProductoModel) => {
+          const index = Math.floor(Math.random() * (productosImages.length - 0) + 0);
+          const imgUrl = productosImages[index];
           return (
             <div key={producto.id} className="producto" onClick={() => openProducto(producto.id)}>
               <Image
-                src="https://i.pinimg.com/236x/94/c8/af/94c8af794204150afb7fdc5d7ab2267d.jpg"
+                src={imgUrl}
                 className="product-img"
                 alt='producto imagen'
               ></Image>

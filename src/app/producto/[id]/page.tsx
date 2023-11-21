@@ -1,14 +1,28 @@
 'use client'
 import './producto.css';
-import { Button } from "@nextui-org/button";
-import React, { useEffect, useState } from "react";
-import {Input, Select, SelectItem} from "@nextui-org/react";
-import {Card, CardBody, CardFooter, Image} from "@nextui-org/react";
 import Icon from '../../components/icon/icon';
+import { useEffect, useMemo, useState } from "react";
+import { Button } from "@nextui-org/button";
+import { Input } from "@nextui-org/react";
+import { Card, CardBody, CardFooter, Image } from "@nextui-org/react";
 import { API_URL, POST } from '@/app/services/fetch.service';
 import { useParams } from 'next/navigation';
 import { ProductoModel } from '@/app/models/producto.model';
 import { useAuth } from '@/app/services/auth.provider';
+
+const productosImages = [
+  "https://www.viaappia.com.ve/uploads/productos/20220915161313H.jpeg",
+  "https://images.openfoodfacts.org/images/products/780/200/000/2564/front_es.12.full.jpg",
+  "https://andreuprados.com/wp-content/uploads/2017/01/apple_0.jpg",
+  "https://fundacionmujeresempresarias.org/wp-content/uploads/2016/08/lechuga-crespa.png",
+  "https://copservir.vtexassets.com/arquivos/ids/1029868/ACETAMINOFEN-500-MG--COASP-_L.png?v=638292538669270000",
+  "https://static.merqueo.com/images/products/large/7cc900b9-71cd-47f4-b3b1-1d61d0ea9def.jpg",
+  "https://jumbocolombiaio.vtexassets.com/arquivos/ids/202997/7702129020756-20-282-29.jpg?v=637814193303400000",
+  "https://thefoodtech.com/wp-content/uploads/2021/05/yogures.png",
+  "https://vaquitaexpress.com.co/media/catalog/product/cache/e89ece728e3939ca368b457071d3c0be/7/5/7509546069241_37.jpg",
+  "https://elamigodelanoche.com/wp-content/uploads/2020/06/Cerveza-A%CC%81guila-Original-Lata_.jpg",
+  "https://mundodulces17.com/wp-content/uploads/2023/03/festival-chocolate-x-4.jpg"
+];
 
 export default function Producto(){
 
@@ -69,6 +83,11 @@ export default function Producto(){
     },
   ];
 
+  const imgUrl = useMemo(() => {
+    const index = Math.floor(Math.random() * (productosImages.length - 0) + 0);
+    return productosImages[index];
+  }, []);
+
   if (!producto.id) {
     return "";
   }
@@ -78,11 +97,11 @@ export default function Producto(){
         <div className="flex">
           <div className="m-2 size-img">
             <Image
-              className="rounded-lg"
-              src="https://i.pinimg.com/564x/61/4b/41/614b410de3dd4854218a9a96e863625b.jpg"
+              className="rounded-lg max-h-[500px] max-w-[500px]"
+              src={imgUrl}
               alt="imagen producto"
             ></Image>
-            <p className="ml-1 my-3 font-semibold text-2xl">${producto.precio}</p>
+            <p className="ml-1 my-3 font-semibold text-4xl">${producto.precio}</p>
             <p>
               <span>Cantidad:</span>
               <Input 
@@ -107,10 +126,10 @@ export default function Producto(){
           <div className="m-2 size-info">
             <h1 className="text-center font-bold text-4xl mb-5">{producto.nombre}</h1>
             <div>
-              <p className="text-xl font-semibold mb-3">
+              <p className="text-xl font-semibold mb-5">
                 Descripción del producto
               </p>
-              <div>
+              <div className='text-xl'>
                 {producto.descripcion}
               </div>
             </div>
